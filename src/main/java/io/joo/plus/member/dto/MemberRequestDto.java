@@ -12,4 +12,6 @@ public class MemberRequestDto {
 
     @Pattern(regexp = "^[a-zA-Z0-9]{4,15}")
     private String password;
+
+
 }

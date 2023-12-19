@@ -1,5 +1,6 @@
 package io.joo.plus.member.entity;
 
+import io.joo.plus.post.entity.Post;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,6 +23,9 @@ public class Member {
 
     @Column(nullable = false)
     private String password;
+
+    @OneToMany(mappedBy = "member")  //LAZY 주의
+    private List<Post> postList = new ArrayList<>();
 
 
     public Member(String userId, String password){

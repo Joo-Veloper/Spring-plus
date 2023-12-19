@@ -35,7 +35,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
         if(Objects.nonNull(token)){
             if(jwtUtil.validateToken(token)){
-                Claims info = jwtUtil.getMemberInfoFromToken(token);
+                Claims info = jwtUtil.getUserInfoFromToken(token);
 
                 String userId = info.getSubject();
                 SecurityContext context = SecurityContextHolder.createEmptyContext();
