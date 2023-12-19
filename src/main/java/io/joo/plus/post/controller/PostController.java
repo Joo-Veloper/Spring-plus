@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/posts")
 public class PostController {
     private final PostService postService;
-    private final PostRepository postRepository;
+
 
     @PostMapping("")
     public String createPost(@RequestBody PostRequestDto requestDto, @AuthenticationPrincipal MemberDetailsImpl memberDetails, HttpServletResponse response) {
