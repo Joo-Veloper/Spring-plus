@@ -14,13 +14,17 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
 
+    public boolean existsById(String userId) {
+        return memberRepository.findByUserId(userId).isPresent();
+    }
+
     public void signup(MemberRequestDto memberRequestDto) {
         String userId = memberRequestDto.getUserId();
         String password = passwordEncoder.encode(memberRequestDto.getPassword());
 
 
         if(memberRepository.findByUserId(userId).isPresent()){
-            throw new IllegalArgumentException("이미 존재하는 유저 입니다.");
+            throw new IllegalArgumentException("이미 존재하는 닉네임 입니다.");
         }
         Member member = new Member(userId, password);
         memberRepository.save(member);
@@ -31,9 +35,11 @@ public class MemberService {
         String password = memberRequestDto.getPassword();
 
         Member member = memberRepository.findByUserId(userId)
-                .orElseThrow(()-> new UsernameNotFoundException("등록된 유저가 없습니다."));
+                .orElseThrow(()-> new UsernameNotFoundException("닉네임을 확인해 주세요."));
         if(!passwordEncoder.matches(password, member.getPassword())){
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
     }
+
+
 }

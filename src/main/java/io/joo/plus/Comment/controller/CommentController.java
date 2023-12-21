@@ -21,6 +21,7 @@ import java.util.Map;
 public class CommentController {
     private final CommentService commentService;
 
+    // 작성
     @PostMapping("/comments")
     private String createComment(@PathVariable Long postId, @RequestBody CommentRequestDto requestDto, @AuthenticationPrincipal MemberDetailsImpl memberDetails, HttpServletResponse response) {
         if (memberDetails == null) {
@@ -31,12 +32,13 @@ public class CommentController {
             return "redirect:/api/posts/" + postId + "/comments";
         }
     }
+    //조회
     @ResponseBody
     @GetMapping("/comments")  //no-auth
     private List<CommentResponseDto> getComments(@PathVariable Long postId) {
         return commentService.getComments(postId);
     }
-
+    //수정
     @PostMapping("/comments/{commentId}")
     private String updateComment(@PathVariable Long postId, @PathVariable Long commentId, @RequestBody CommentRequestDto requestDto, @AuthenticationPrincipal MemberDetailsImpl memberDetails, HttpServletResponse response) {
         if (memberDetails == null) {
@@ -47,7 +49,7 @@ public class CommentController {
             return "redirect:/api/posts/" + postId + "/comments";
         }
     }
-
+    //삭제
     @DeleteMapping("/comments/{commentId}")
     private String deleteComment(@PathVariable Long postId, @PathVariable Long commentId, @AuthenticationPrincipal MemberDetailsImpl memberDetails, HttpServletResponse response) {
         if (memberDetails == null) {

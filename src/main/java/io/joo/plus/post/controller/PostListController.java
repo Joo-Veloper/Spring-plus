@@ -22,7 +22,8 @@ public class PostListController {
         this.postRepository = postRepository;
     }
 
-    @GetMapping("/myposts")
+    // 토큰 값 넣으면 내 게시물 만 조회 가능
+    @GetMapping("/list")
     public List<PostResponseDto> getOwnPostList(@AuthenticationPrincipal MemberDetailsImpl memberDetails) {
         try {
             List<Post> ownPosts;

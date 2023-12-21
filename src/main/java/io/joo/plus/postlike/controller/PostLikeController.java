@@ -1,7 +1,6 @@
 package io.joo.plus.postlike.controller;
 
 import io.joo.plus.postlike.dto.CommonLikeResponseDto;
-import io.joo.plus.postlike.entity.PostLike;
 import io.joo.plus.postlike.service.PostLikeService;
 import io.joo.plus.security.MemberDetailsImpl;
 import lombok.RequiredArgsConstructor;

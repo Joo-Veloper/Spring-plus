@@ -1,0 +1,6 @@
+## API 명세 
+![스크린샷 2023-12-21 204650.png](..%2F..%2FPictures%2FScreenshots%2F%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7%202023-12-21%20204650.png)
+![스크린샷 2023-12-21 204331.png](..%2F..%2FPictures%2FScreenshots%2F%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7%202023-12-21%20204331.png)
+
+## ERD
+![스크린샷 2023-12-21 210337.png](..%2F..%2FPictures%2FScreenshots%2F%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7%202023-12-21%20210337.png)

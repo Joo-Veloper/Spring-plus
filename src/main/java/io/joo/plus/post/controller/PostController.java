@@ -3,7 +3,6 @@ package io.joo.plus.post.controller;
 import io.joo.plus.post.dto.PostCreateResponseDto;
 import io.joo.plus.post.dto.PostRequestDto;
 import io.joo.plus.post.dto.PostResponseDto;
-import io.joo.plus.post.repostitory.PostRepository;
 import io.joo.plus.post.service.PostService;
 import io.joo.plus.security.MemberDetailsImpl;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 public class PostController {
     private final PostService postService;
 
-
+    // 글 작성
     @PostMapping("")
     public String createPost(@RequestBody PostRequestDto requestDto, @AuthenticationPrincipal MemberDetailsImpl memberDetails, HttpServletResponse response) {
         if(memberDetails==null) {
@@ -30,13 +29,13 @@ public class PostController {
             return "redirect:/api/posts/" + createdPost.getPostId();
         }
     }
-
+    // 글 조회
     @ResponseBody
     @GetMapping("/{postId}")     //no-auth
     public PostResponseDto getPost(@PathVariable Long postId) {
         return postService.getPost(postId);
     }
-
+    // 글 수정
 
     @PatchMapping("/{postId}")
     public String updatePost(@PathVariable Long postId, @RequestBody PostRequestDto requestDto, @AuthenticationPrincipal MemberDetailsImpl memberDetails, HttpServletResponse response) {
@@ -48,7 +47,7 @@ public class PostController {
             return "redirect:/api/posts/" + postId;
         }
     }
-
+    // 글 삭제
     @DeleteMapping("/{postId}")
     public String deletePost(@PathVariable Long postId, @AuthenticationPrincipal MemberDetailsImpl memberDetails, HttpServletResponse response) {
         if (memberDetails == null) {

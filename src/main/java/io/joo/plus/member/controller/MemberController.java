@@ -9,10 +9,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -21,7 +18,23 @@ import org.springframework.web.bind.annotation.RestController;
 public class MemberController {
     private final MemberService memberService;
     private final JwtUtil jwtUtil;
+    @GetMapping("/{userId}/checkId")
+    public ResponseEntity<CommonResponseDto> checkId(@PathVariable String userId) {
+        boolean exists = checkIdExists(userId);
+        if (exists) {
+            // 중복된 아이디인 경우
+            return ResponseEntity.ok(new CommonResponseDto("아이디가 이미 존재합니다.", HttpStatus.BAD_REQUEST.value()));
+        } else {
+            // 중복되지 않은 아이디인 경우
+            return ResponseEntity.ok(new CommonResponseDto("사용 가능한 아이디입니다.", HttpStatus.CONTINUE.value()));
+        }
+    }
 
+    private boolean checkIdExists(String userId) {
+        return memberService.existsById(userId);
+    }
+
+    //회원가입
     @PostMapping("/signup")
     public ResponseEntity<CommonResponseDto> signup(@Valid @RequestBody MemberRequestDto memberRequestDto){
         try {
@@ -33,7 +46,7 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.CREATED.value())
                 .body(new CommonResponseDto("회원가입 성공", HttpStatus.CREATED.value()));
     }
-
+    // 로그인
     @PostMapping("/login")
     public ResponseEntity<CommonResponseDto> login(@RequestBody MemberRequestDto memberRequestDto, HttpServletResponse res){
         try {
