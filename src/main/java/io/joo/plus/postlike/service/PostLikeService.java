@@ -17,35 +17,32 @@ import org.springframework.stereotype.Service;
 public class PostLikeService {
     private final PostRepository postRepository;
     private final PostLikeRepository postLikeRepository;
-
     public ResponseEntity<CommonLikeResponseDto> postLike(Long postId, MemberDetailsImpl memberDetails) {
         try {
             Post post = findPostById(postId);
             Member member = memberDetails.getMember();
 
-            if (post.getMember().getUserId().equals(member.getUserId())) {
-                throw new IllegalArgumentException("본인의 게시글입니다.");
-            }
-
             PostLike postLike = postLikeRepository.findByPostIdAndMemberId(post.getId(), member.getId());
+            boolean isLiked = false;
 
             if (postLike == null) {
-                postLikeRepository.save(new PostLike(post, member, true));
+                postLike = new PostLike(post, member, true);
+                postLikeRepository.save(postLike);
+                isLiked = true;
             } else {
-                if (postLike.getMember().getUserId().equals(member.getUserId())) {
-                    postLike.setIsLike(!postLike.getIsLike());
-                    postLikeRepository.save(postLike);
-                } else {
-                    throw new IllegalArgumentException("이미 다른 사용자가 좋아요를 눌렀습니다.");
+                if (!postLike.getMember().getUserId().equals(member.getUserId())) {
+                    throw new IllegalArgumentException("다른 사용자가 이미 좋아요를 눌렀습니다.");
                 }
+
+                postLike.setIsLike(!postLike.getIsLike());
+                postLikeRepository.save(postLike);
+                isLiked = postLike.getIsLike();
             }
 
             Long likes = (long) postLikeRepository.countByPostIdAndIsLikeTrue(post.getId());
-
-            boolean isLiked = postLike != null && postLike.getIsLike();
             String message = isLiked ? "좋아요 성공" : "좋아요 해제";
-            return ResponseEntity.ok().body(new CommonLikeResponseDto(message, HttpStatus.OK.value(), likes));
 
+            return ResponseEntity.ok().body(new CommonLikeResponseDto(message, HttpStatus.OK.value(), likes));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest()
                     .body(new CommonLikeResponseDto(e.getMessage(), HttpStatus.BAD_REQUEST.value(), null));
