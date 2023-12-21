@@ -4,10 +4,11 @@ import io.joo.plus.post.dto.PostResponseDto;
 import io.joo.plus.post.entity.Post;
 import io.joo.plus.post.repostitory.PostRepository;
 import io.joo.plus.security.MemberDetailsImpl;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.List;
@@ -21,23 +22,31 @@ public class PostListController {
     public PostListController(PostRepository postRepository) {
         this.postRepository = postRepository;
     }
-
-    // 토큰 값 넣으면 내 게시물 만 조회 가능
-    @GetMapping("/list")
-    public List<PostResponseDto> getOwnPostList(@AuthenticationPrincipal MemberDetailsImpl memberDetails) {
+    //게시물 페이징
+    @GetMapping("/list/{listpage}")
+    public List<PostResponseDto> getOwnPostList(
+            @AuthenticationPrincipal MemberDetailsImpl memberDetails,
+            @PathVariable int listpage,
+            @RequestParam(defaultValue = "10") int size
+    ) {
         try {
-            List<Post> ownPosts;
+            Pageable pageable = PageRequest.of(listpage - 1, size); // Subtract 1 as pages start from 0 in PageRequest
+
+            Page<Post> ownPosts;
             if (memberDetails == null) {
-                ownPosts = postRepository.findTop10ByOrderByCreatedAtDesc(); // Example: get the top 10 posts
+                ownPosts = postRepository.findAll(pageable); // Example: get all posts paginated
             } else {
-                ownPosts = postRepository.findAllByMemberIdOrderByCreatedAtDesc(memberDetails.getMember().getId());
+                ownPosts = postRepository.findAllByMemberIdOrderByCreatedAtDesc(memberDetails.getMember().getId(), pageable);
             }
-            return convertToDtoList(ownPosts);
+
+            return convertToDtoList(ownPosts.getContent());
         } catch (Exception e) {
             e.printStackTrace();
             return Collections.emptyList();
         }
     }
+
+
     private List<PostResponseDto> convertToDtoList(List<Post> posts) {
         return posts.stream()
                 .map(PostResponseDto::new)
