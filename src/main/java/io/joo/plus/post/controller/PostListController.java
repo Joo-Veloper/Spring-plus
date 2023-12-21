@@ -7,6 +7,7 @@ import io.joo.plus.security.MemberDetailsImpl;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,28 +25,21 @@ public class PostListController {
     }
     //게시물 페이징
     @GetMapping("/list/{listpage}")
-    public List<PostResponseDto> getOwnPostList(
-            @AuthenticationPrincipal MemberDetailsImpl memberDetails,
+    public List<PostResponseDto> getPostList(
             @PathVariable int listpage,
             @RequestParam(defaultValue = "10") int size
     ) {
         try {
-            Pageable pageable = PageRequest.of(listpage - 1, size); // Subtract 1 as pages start from 0 in PageRequest
+            Pageable pageable = PageRequest.of(listpage - 1, size, Sort.by("createdAt").descending());
 
-            Page<Post> ownPosts;
-            if (memberDetails == null) {
-                ownPosts = postRepository.findAll(pageable); // Example: get all posts paginated
-            } else {
-                ownPosts = postRepository.findAllByMemberIdOrderByCreatedAtDesc(memberDetails.getMember().getId(), pageable);
-            }
+            Page<Post> posts = postRepository.findAll(pageable);
 
-            return convertToDtoList(ownPosts.getContent());
+            return convertToDtoList(posts.getContent());
         } catch (Exception e) {
             e.printStackTrace();
             return Collections.emptyList();
         }
     }
-
 
     private List<PostResponseDto> convertToDtoList(List<Post> posts) {
         return posts.stream()
